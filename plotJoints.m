@@ -3,7 +3,7 @@ figure(1)
 graph1 = subplot(3,1,1);
 plot(graph1,joint(:,1),joint(:,2))
 xlabel(graph1,'time (s)')
-ylabel(graph1,strcat('\Theta',num2str(num)))
+ylabel(graph1,strcat('\Theta_',num2str(num)))
 title(graph1,strcat('\Theta_',num2str(num),' vs time'))
 graph2 = subplot(3,1,2);
 plot(graph2,joint(:,1),joint(:,3))
