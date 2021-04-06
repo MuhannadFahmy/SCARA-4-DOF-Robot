@@ -23,7 +23,6 @@ float toRad(float x)
 {
 	return (pi * x) / 180;
 }
-
 // just trying 
 const float L1 = 195.0;
 const float L2 = 142.0;
@@ -165,7 +164,6 @@ void moveToCoordinates() //WIP
 	const int ESC = 27;
 
 	cout << "Please press any key to start or ESC to go back" << endl;
-
 	c = _getch();
 
 	while (1)
@@ -173,7 +171,6 @@ void moveToCoordinates() //WIP
 
 		if (c != ESC)
 		{
-			
 			// getting inputs from the user 
 			float q[4];
 			cout << "Please enter the value of X [mm]: ";
@@ -182,7 +179,7 @@ void moveToCoordinates() //WIP
 			cin >> q[1];
 			cout << "Please enter the value of Z [mm]: ";
 			cin >> q[2];
-			cout << "Please enter the value of Theta [Degree]: ";    //Need a fix
+			cout << "Please enter the value of \u03C6 [°]: ";
 			cin >> q[3];
 
 			//making sure the input is not more than 2pi
@@ -211,17 +208,10 @@ void moveToCoordinates() //WIP
 
 			if (solVector(2, 0) != 0)
 			{
-				GetConfiguration(current);
-
-				cout << current[0] << endl;
-				cout << current[1] << endl;
-				cout << current[2] << endl;
-				cout << current[3] << endl;
-				
-				cout << GetConfiguration(current) << endl;
 				printf("Press '1' for solution 1, '2' for solution 2 or '3' for the closest solution  \n");
 
 				ch = _getch();
+
 				//executing the desired solution
 				if (ch == '1')
 				{
@@ -238,20 +228,13 @@ void moveToCoordinates() //WIP
 					//dif(circile_solution)
 					// use get configuration and absoulute
 					// change abs to more accurate
-					float dif1_1, dif1_2, dif2_1, dif2_2, dif3_1, dif3_2, dif4_1, dif4_2 ;
+					float dif1_1, dif1_2, dif2_1, dif2_2;
 					dif1_1 = S_1[0] - current[0]; while (dif1_1 > 360) { dif1_1 = dif1_1 - 360; } while (dif1_1 < -360) { dif1_1 = dif1_1 + 360; }
 					dif1_2 = S_2[0] - current[0]; while (dif1_2 > 360) { dif1_2 = dif1_2 - 360; } while (dif1_2 < -360) { dif1_2 = dif1_2 + 360; }
 					dif2_1 = S_1[1] - current[1]; while (dif2_1 > 360) { dif2_1 = dif2_1 - 360; } while (dif2_1 < -360) { dif2_1 = dif2_1 + 360; }
 					dif2_2 = S_2[1] - current[1]; while (dif2_2 > 360) { dif2_2 = dif2_2 - 360; } while (dif2_2 < -360) { dif2_2 = dif2_2 + 360; }
-					dif3_1 = S_1[2] - current[2]; 
-					dif3_2 = S_2[2] - current[2];
-					dif4_1 = S_1[3] - current[3]; while (dif4_1 > 360) { dif4_1 = dif4_1 - 360; } while (dif4_1 < -360) { dif4_1 = dif4_1 + 360; }
-					dif4_2 = S_2[3] - current[3]; while (dif4_2 > 360) { dif4_2 = dif4_2 - 360; } while (dif4_2 < -360) { dif4_2 = dif4_2 + 360; }
 
-					cout << "solution 1 " <<(abs(L1 * toRad(dif1_1)) + abs(L2 * toRad(dif2_1))) << endl;
-					cout << "solution 2 " << (abs(L1 * toRad(dif1_2)) + abs(L2 * toRad(dif2_2))) << endl;
-
-					if ((abs(L1 * toRad(dif1_1)) + abs( L2 * toRad(dif2_1)) + abs(dif3_1) + toRad(dif4_1)) < (abs(L1 * toRad(dif1_2)) + abs(L2 * toRad(dif2_2)) + abs(dif3_2) + toRad(dif4_2)) || solVector(2, 1) == 0)
+					if ((abs(L1 * toRad(dif1_1)) + abs( L2 * toRad(dif2_1))) > (abs(L1 * toRad(dif1_2)) + abs(L2 * toRad(dif2_2))) || solVector(2, 1) == 0)
 					{
 						MoveToConfiguration(S_1);
 						for (int i = 0; i < 4; i++) { current[i] = S_1[i]; }
@@ -263,7 +246,7 @@ void moveToCoordinates() //WIP
 					}
 
 				}
-				cout << "Please press any key to start or ESC to go back" << endl;
+
 				c = _getch();
 			}
 		}
@@ -290,24 +273,24 @@ void jointVectorInput()
 
 	do {
 		do {
-			cout << "Please enter the value of Theta1 [Degree]: ";    
+			cout << "Please enter the value of \u03B81 [°]: ";
 			//degree symbol does not display in console either by text or HTML symbol call
 			cin >> g1[0];
 			JV[0] = toRad(g1[0]);
 			if (JV[0] < joint1Lim[0] || JV[0] > joint1Lim[1])
 			{
-				cout << "Joint 1 out of limits as Theta1 must be between -150 and +150";
+				cout << "Joint 1 out of limits as \u03B81 must be between -150° and +150°";
 				lim = false;
 			}
 			else { lim = true; }
 		} while (lim == false);
 		do {
-			cout << "Please enter the value of Theta2 [Degree]: ";   
+			cout << "Please enter the value of \u03B82 [°]: ";
 			cin >> g1[1];
 			JV[1] = toRad(g1[1]);
 			if (JV[1] < joint2Lim[0] || JV[1] > joint2Lim[1])
-			{ 
-				cout << "Joint 2 out of limits as Theta2 must be between -100 and +100";  
+			{
+				cout << "Joint 2 out of limits as \u03B82 must be between -100° and +100°";
 				lim = false;
 			}
 			else { lim = true; }
@@ -324,12 +307,12 @@ void jointVectorInput()
 			else { lim = true; }
 		} while (lim == false);
 		do {
-			cout << "Please enter the value of Theta4 [Degree]: ";   //Need a fix
+			cout << "Please enter the value of \u03B84 [°]: ";
 			cin >> g1[3];
 			JV[3] = toRad(g1[3]);
 			if (JV[3] < joint4Lim[0] || JV[3] > joint4Lim[1])
 			{
-				cout << "Joint 4 out of limits as Theta4 must be between -150 and +150";    //Need a fix
+				cout << "Joint 4 out of limits as \u03B84 must be between -150° and +150°";
 				lim = false;
 			}
 			else { lim = true; }
@@ -351,7 +334,7 @@ void jointVectorInput()
 		cout << "X = " << Poise[0] << " mm \n";
 		cout << "Y = " << Poise[1] << " mm \n";
 		cout << "Z = " << Poise[2] << " mm \n";
-		cout << "\u03C6 = " << toDegree(Poise[3]) << " Degree \n";
+		cout << "\u03C6 = " << toDegree(Poise[3]) << " ° \n";
 
 		/*Display the Poise of the gripper at the given joint vector*/
 
