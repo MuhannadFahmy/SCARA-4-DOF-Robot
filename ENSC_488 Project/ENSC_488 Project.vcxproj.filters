@@ -34,5 +34,8 @@
     <ClInclude Include="..\Kinematics.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\spline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,9 +8,14 @@
 #include <string>
 #include <Eigen/Dense>
 #include <math.h>
+#include <vector>
+#include "spline.h"
+
 
 using namespace std;
 using namespace Eigen;
+
+
 
 const double pi = 2 * acos(0.0);
 
@@ -36,6 +41,7 @@ const float joint2Lim[] = { toRad(-100) , toRad(100) };
 const float jointH3Lim[] = { -200, -100 };
 const float joint3Lim[] = { -200, -100 };
 const float joint4Lim[] = { toRad(-160), toRad(160) };
+bool choosePos(JOINT&, JOINT&, JOINT&);
 
 MatrixXf inverseKinematics(float gPos[]) //almost done
 {
@@ -211,7 +217,6 @@ void moveToCoordinates() //WIP
 
 			if (solVector(2, 0) != 0)
 			{
-				GetConfiguration(current);
 
 				cout << current[0] << endl;
 				cout << current[1] << endl;
@@ -235,33 +240,11 @@ void moveToCoordinates() //WIP
 				}
 				else if (ch == '3')
 				{
-					//dif(circile_solution)
-					// use get configuration and absoulute
-					// change abs to more accurate
-					float dif1_1, dif1_2, dif2_1, dif2_2, dif3_1, dif3_2, dif4_1, dif4_2 ;
-					dif1_1 = S_1[0] - current[0]; while (dif1_1 > 360) { dif1_1 = dif1_1 - 360; } while (dif1_1 < -360) { dif1_1 = dif1_1 + 360; }
-					dif1_2 = S_2[0] - current[0]; while (dif1_2 > 360) { dif1_2 = dif1_2 - 360; } while (dif1_2 < -360) { dif1_2 = dif1_2 + 360; }
-					dif2_1 = S_1[1] - current[1]; while (dif2_1 > 360) { dif2_1 = dif2_1 - 360; } while (dif2_1 < -360) { dif2_1 = dif2_1 + 360; }
-					dif2_2 = S_2[1] - current[1]; while (dif2_2 > 360) { dif2_2 = dif2_2 - 360; } while (dif2_2 < -360) { dif2_2 = dif2_2 + 360; }
-					dif3_1 = S_1[2] - current[2]; 
-					dif3_2 = S_2[2] - current[2];
-					dif4_1 = S_1[3] - current[3]; while (dif4_1 > 360) { dif4_1 = dif4_1 - 360; } while (dif4_1 < -360) { dif4_1 = dif4_1 + 360; }
-					dif4_2 = S_2[3] - current[3]; while (dif4_2 > 360) { dif4_2 = dif4_2 - 360; } while (dif4_2 < -360) { dif4_2 = dif4_2 + 360; }
+					
+					JOINT solution;
 
-					cout << "solution 1 " <<(abs(L1 * toRad(dif1_1)) + abs(L2 * toRad(dif2_1))) << endl;
-					cout << "solution 2 " << (abs(L1 * toRad(dif1_2)) + abs(L2 * toRad(dif2_2))) << endl;
-
-					if ((abs(L1 * toRad(dif1_1)) + abs( L2 * toRad(dif2_1)) + abs(dif3_1) + toRad(dif4_1)) < (abs(L1 * toRad(dif1_2)) + abs(L2 * toRad(dif2_2)) + abs(dif3_2) + toRad(dif4_2)) || solVector(2, 1) == 0)
-					{
-						MoveToConfiguration(S_1);
-						for (int i = 0; i < 4; i++) { current[i] = S_1[i]; }
-					}
-					else
-					{
-						MoveToConfiguration(S_2);
-						for (int i = 0; i < 4; i++) { current[i] = S_2[i]; }
-					}
-
+					for (int i = 0; i < 4; i++) { solution[i] = choosePos(current, S_1, S_2) ? S_1[i] : S_2[i]; }
+					MoveToConfiguration(solution);
 				}
 				cout << "Please press any key to start or ESC to go back" << endl;
 				c = _getch();
@@ -275,6 +258,35 @@ void moveToCoordinates() //WIP
 
 
 }
+
+bool choosePos(JOINT &current, JOINT &S_1, JOINT &S_2)
+{
+	JOINT* Solution;
+
+	float dif1_1, dif1_2, dif2_1, dif2_2, dif3_1, dif3_2, dif4_1, dif4_2;
+	dif1_1 = S_1[0] - current[0]; while (dif1_1 > 360) { dif1_1 = dif1_1 - 360; } while (dif1_1 < -360) { dif1_1 = dif1_1 + 360; }
+	dif1_2 = S_2[0] - current[0]; while (dif1_2 > 360) { dif1_2 = dif1_2 - 360; } while (dif1_2 < -360) { dif1_2 = dif1_2 + 360; }
+	dif2_1 = S_1[1] - current[1]; while (dif2_1 > 360) { dif2_1 = dif2_1 - 360; } while (dif2_1 < -360) { dif2_1 = dif2_1 + 360; }
+	dif2_2 = S_2[1] - current[1]; while (dif2_2 > 360) { dif2_2 = dif2_2 - 360; } while (dif2_2 < -360) { dif2_2 = dif2_2 + 360; }
+	dif3_1 = S_1[2] - current[2];
+	dif3_2 = S_2[2] - current[2];
+	dif4_1 = S_1[3] - current[3]; while (dif4_1 > 360) { dif4_1 = dif4_1 - 360; } while (dif4_1 < -360) { dif4_1 = dif4_1 + 360; }
+	dif4_2 = S_2[3] - current[3]; while (dif4_2 > 360) { dif4_2 = dif4_2 - 360; } while (dif4_2 < -360) { dif4_2 = dif4_2 + 360; }
+	
+	if ((abs(L1 * toRad(dif1_1)) + abs(L2 * toRad(dif2_1)) + abs(dif3_1) + toRad(dif4_1)) < (abs(L1 * toRad(dif1_2)) + abs(L2 * toRad(dif2_2)) + abs(dif3_2) + toRad(dif4_2)) || S_2[2] == 0)
+	{
+		for (int i = 0; i < 4; i++) { current[i] = S_1[i]; }
+		return true;
+	}
+	else
+	{
+		for (int i = 0; i < 4; i++) { current[i] = S_2[i]; }
+		return false;
+	}
+}
+
+
+
 
 void jointVectorInput()
 {
@@ -367,4 +379,104 @@ void jointVectorInput()
 			break;
 
 	} while (rep);
+}
+
+
+
+
+float distance(float point1[], float point2[])
+{
+	return (sqrt(pow(point1[0] - point2[0], 2) + pow(point1[1] - point2[1], 2) + pow(point1[2] - point2[2], 2)));
+}
+
+
+
+void pathPlanning()
+{
+	// getting in points
+	JOINT current = { 90,0,-175,0 };
+	JOINT point1;
+	JOINT point1_2;
+	JOINT point2;
+	JOINT point2_2;
+	JOINT point3;
+	JOINT point3_2;
+	JOINT sol1;
+	JOINT sol2;
+	JOINT sol3;
+	float tTime;
+
+	float cc[4] = { 90, 0, -175, 0 };
+
+
+	float q[3][4];
+	for (int i = 0; i < 3; i++)
+	{
+		cout << "please enter point " << i + 1 << " parameters:" << endl;
+
+		cout << "Please enter the value of X [mm]: ";
+		cin >> q[i][0];
+		cout << "Please enter the value of Y [mm]: ";
+		cin >> q[i][1];
+		cout << "Please enter the value of Z [mm]: ";
+		cin >> q[i][2];
+		cout << "Please enter the value of Theta [Degree]: ";   
+		cin >> q[i][3];
+
+		//making sure the input is not more than 2pi
+		while (q[i][3] >= 360)
+		{
+			q[i][3] = q[i][3] - 360;
+		}
+	}
+
+	cout << "Please enter the total time [s]: ";
+	cin >> tTime;
+
+	float q1[4], q2[4], q3[4];
+	
+	for (int i = 0; i < 4; i++) { q1[i] = q[0][i]; }
+	for (int i = 0; i < 4; i++) { q2[i] = q[1][i]; }
+	for (int i = 0; i < 4; i++) { q3[i] = q[2][i]; }
+
+	float d1, d2, d3;
+	float tS1, tS2, tS3;
+	d1 = distance(cc, q2);
+	d2 = distance(q1, q2);
+	d3 = distance(q2, q3);
+	tS1 = (d1 / (d1 + d2 + d3)) * tTime;
+	tS2 = (d2 / (d1 + d2 + d3)) * tTime;
+	tS3 = (d3 / (d1 + d2 + d3)) * tTime;
+
+	MatrixXf options_1 = inverseKinematics(q1);
+	for (int i = 0; i < 4; i++){point1[i] = options_1(i, 0);}
+	for (int i = 0; i < 4; i++) {point1_2[i] = options_1(i, 1);}
+	for (int i = 0; i < 4; i++) { sol1[i] = choosePos(current, point1, point1_2) ? point1[i] : point1_2[i]; }
+
+	MatrixXf options_2 = inverseKinematics(q2);
+	for (int i = 0; i < 4; i++) { point2[i] = options_2(i, 0); }
+	for (int i = 0; i < 4; i++) { point2_2[i] = options_2(i, 1); }
+	for (int i = 0; i < 4; i++) { sol2[i] = choosePos(sol1, point2, point2_2) ? point2[i] : point2_2[i]; }
+
+	MatrixXf options_3 = inverseKinematics(q3);
+	for (int i = 0; i < 4; i++) { point3[i] = options_2(i, 0); }
+	for (int i = 0; i < 4; i++) { point3_2[i] = options_2(i, 1); }
+	for (int i = 0; i < 4; i++) { sol3[i] = choosePos(sol2, point3, point3_2) ? point3[i] : point3_2[i]; }
+
+	vector<double> vtheta1, vtheta2, vd3, vtheta4, vtime;
+	
+	vtheta1 = {cc[0],sol1[0],sol2[0],sol3[0]};
+	vtheta2 = { cc[1],sol1[1],sol2[1],sol3[1] };
+	vd3 = { cc[2],sol1[2],sol2[2],sol3[2] };
+	vtheta4 = { cc[3],sol1[3],sol2[3],sol3[3] };
+	vtime = { 0, tS1, tS1 + tS2, tS1 + tS2 + tS3 };
+	
+
+	//tk::spline::cspline ();
+	tk::spline s1(vtime, vtheta1);
+	tk::spline s2(vtime, vtheta2);
+	tk::spline s3(vtime, vd3);
+	tk::spline s4(vtime, vtheta4);
+
+
 }
