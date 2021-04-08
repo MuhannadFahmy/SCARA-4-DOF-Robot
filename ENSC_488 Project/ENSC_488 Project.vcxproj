@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>H:\OneDrive - Simon Fraser University %281sfu%29\Academic\STUDY\SFU_\Sem 8\ENSC 488\Project\CopytoYourDir2020\Eigen Lib\eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\muhannad Fahmy\source\repos\ENSC_488 Project\src;H:\OneDrive - Simon Fraser University %281sfu%29\Academic\STUDY\SFU_\Sem 8\ENSC 488\Project\CopytoYourDir2020\Eigen Lib\eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,6 +141,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\ProgrammingDemoFinal.cpp" />
+    <ClCompile Include="..\src\alglibinternal.cpp" />
+    <ClCompile Include="..\src\alglibmisc.cpp" />
+    <ClCompile Include="..\src\ap.cpp" />
+    <ClCompile Include="..\src\dataanalysis.cpp" />
+    <ClCompile Include="..\src\diffequations.cpp" />
+    <ClCompile Include="..\src\fasttransforms.cpp" />
+    <ClCompile Include="..\src\integration.cpp" />
+    <ClCompile Include="..\src\interpolation.cpp" />
+    <ClCompile Include="..\src\linalg.cpp" />
+    <ClCompile Include="..\src\optimization.cpp" />
+    <ClCompile Include="..\src\solvers.cpp" />
+    <ClCompile Include="..\src\specialfunctions.cpp" />
+    <ClCompile Include="..\src\statistics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\PowerCubeSim.lib" />
@@ -149,6 +162,20 @@
     <ClInclude Include="..\ensc-488.h" />
     <ClInclude Include="..\Kinematics.h" />
     <ClInclude Include="..\spline.h" />
+    <ClInclude Include="..\src\alglibinternal.h" />
+    <ClInclude Include="..\src\alglibmisc.h" />
+    <ClInclude Include="..\src\ap.h" />
+    <ClInclude Include="..\src\dataanalysis.h" />
+    <ClInclude Include="..\src\diffequations.h" />
+    <ClInclude Include="..\src\fasttransforms.h" />
+    <ClInclude Include="..\src\integration.h" />
+    <ClInclude Include="..\src\interpolation.h" />
+    <ClInclude Include="..\src\linalg.h" />
+    <ClInclude Include="..\src\optimization.h" />
+    <ClInclude Include="..\src\solvers.h" />
+    <ClInclude Include="..\src\specialfunctions.h" />
+    <ClInclude Include="..\src\statistics.h" />
+    <ClInclude Include="..\src\stdafx.h" />
     <ClInclude Include="..\StdAfx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

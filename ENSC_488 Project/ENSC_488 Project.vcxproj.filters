@@ -13,10 +13,55 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\ALGLIB">
+      <UniqueIdentifier>{45c7439f-7c65-4613-ba38-fb9e12460244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ALGLIB">
+      <UniqueIdentifier>{6703c914-861f-40ae-b6ea-e3eea2691b7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\ProgrammingDemoFinal.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\alglibinternal.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\alglibmisc.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ap.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\dataanalysis.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\diffequations.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\fasttransforms.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\integration.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\interpolation.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\linalg.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\optimization.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\solvers.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\specialfunctions.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\statistics.cpp">
+      <Filter>Source Files\ALGLIB</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -35,7 +80,49 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\spline.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\stdafx.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\alglibinternal.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\alglibmisc.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ap.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\dataanalysis.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\diffequations.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\fasttransforms.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\integration.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\interpolation.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\linalg.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\optimization.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\solvers.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\specialfunctions.h">
+      <Filter>Header Files\ALGLIB</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\statistics.h">
+      <Filter>Header Files\ALGLIB</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

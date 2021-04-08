@@ -1,4 +1,21 @@
 #pragma once
+
+
+
+
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+
+// disable some irrelevant warnings
+#if (AE_COMPILER==AE_MSVC) && !defined(AE_ALL_WARNINGS)
+#pragma warning(disable:4100)
+#pragma warning(disable:4127)
+#pragma warning(disable:4611)
+#pragma warning(disable:4702)
+#pragma warning(disable:4996)
+#endif
 #include "math.h"
 #include <iostream>
 #include "stdafx.h"
@@ -10,6 +27,9 @@
 #include <math.h>
 #include <vector>
 #include "spline.h"
+#include "stdafx.h"
+#include "interpolation.h"
+#include<windows.h>
 
 
 using namespace std;
@@ -42,7 +62,7 @@ const float joint3Lim[] = { -200, -100 };
 const float joint4Lim[] = { toRad(-160), toRad(160) };
 bool choosePos(JOINT&, JOINT&, JOINT&);
 
-MatrixXf inverseKinematics(float gPos[]) //almost done
+MatrixXf inverseKinematics(float gPos[]) 
 {
 
 	float noSolution = abs((pow(gPos[0], 2) + pow(gPos[1], 2) - (pow(L1, 2) + pow(L2, 2))) / (2.0 * L1 * L2));  // checking for solution existance
@@ -68,7 +88,7 @@ MatrixXf inverseKinematics(float gPos[]) //almost done
 
 	if (theta2 < joint2Lim[0] || theta2 > joint2Lim[1])
 	{
-		cout << "Joint 2 out of limits as \u03B82 equals  " << toDegree(theta2) << endl;
+		cout << "Joint 2 out of limits as Theta2 equals  " << toDegree(theta2) << endl;
 
 		return solVector;
 	}
@@ -185,7 +205,7 @@ void moveToCoordinates() //WIP
 			cin >> q[1];
 			cout << "Please enter the value of Z [mm]: ";
 			cin >> q[2];
-			cout << "Please enter the value of \u03C6 [°]: ";
+			cout << "Please enter the value of theta [Degree]: ";
 			cin >> q[3];
 
 			//making sure the input is not more than 2pi
@@ -214,16 +234,11 @@ void moveToCoordinates() //WIP
 
 			if (solVector(2, 0) != 0)
 			{
-
-				cout << current[0] << endl;
-				cout << current[1] << endl;
-				cout << current[2] << endl;
-				cout << current[3] << endl;
 				
-				cout << GetConfiguration(current) << endl;
 				printf("Press '1' for solution 1, '2' for solution 2 or '3' for the closest solution  \n");
 
 				ch = _getch();
+				cout << " char is " << ch << endl;
 
 				//executing the desired solution
 				if (ch == '1')
@@ -242,7 +257,15 @@ void moveToCoordinates() //WIP
 					JOINT solution;
 
 					for (int i = 0; i < 4; i++) { solution[i] = choosePos(current, S_1, S_2) ? S_1[i] : S_2[i]; }
+					
+					cout << solution[0] << endl;
+					cout << solution[1] << endl;
+					cout << solution[2] << endl;
+					cout << solution[3] << endl;
+
 					MoveToConfiguration(solution);
+
+					for (int i = 0; i < 4; i++) { current[i] = solution[i]; }
 				}
 				cout << "Please press any key to start or ESC to go back" << endl;
 				c = _getch();
@@ -273,18 +296,13 @@ bool choosePos(JOINT &current, JOINT &S_1, JOINT &S_2)
 	
 	if ((abs(L1 * toRad(dif1_1)) + abs(L2 * toRad(dif2_1)) + abs(dif3_1) + toRad(dif4_1)) < (abs(L1 * toRad(dif1_2)) + abs(L2 * toRad(dif2_2)) + abs(dif3_2) + toRad(dif4_2)) || S_2[2] == 0)
 	{
-		for (int i = 0; i < 4; i++) { current[i] = S_1[i]; }
 		return true;
 	}
 	else
 	{
-		for (int i = 0; i < 4; i++) { current[i] = S_2[i]; }
 		return false;
 	}
 }
-
-
-
 
 void jointVectorInput()
 {
@@ -379,15 +397,10 @@ void jointVectorInput()
 	} while (rep);
 }
 
-
-
-
 float distance(float point1[], float point2[])
 {
 	return (sqrt(pow(point1[0] - point2[0], 2) + pow(point1[1] - point2[1], 2) + pow(point1[2] - point2[2], 2)));
 }
-
-
 
 void pathPlanning()
 {
@@ -399,82 +412,286 @@ void pathPlanning()
 	JOINT point2_2;
 	JOINT point3;
 	JOINT point3_2;
+	JOINT point4;
+	JOINT point4_2;
+
 	JOINT sol1;
 	JOINT sol2;
 	JOINT sol3;
-	float tTime;
+	JOINT sol4;
 
-	float cc[4] = { 90, 0, -175, 0 };
+	float tTime, indext;
+	
+	//homerobot();
+
+	float cc[4] = { 90, 0, -175, 0 };  
 
 
-	float q[3][4];
-	for (int i = 0; i < 3; i++)
-	{
-		cout << "please enter point " << i + 1 << " parameters:" << endl;
+	float q[4][4];
 
-		cout << "Please enter the value of X [mm]: ";
-		cin >> q[i][0];
-		cout << "Please enter the value of Y [mm]: ";
-		cin >> q[i][1];
-		cout << "Please enter the value of Z [mm]: ";
-		cin >> q[i][2];
-		cout << "Please enter the value of Theta [Degree]: ";   
-		cin >> q[i][3];
+	q[0][0] = -142;
+	q[0][1] = 195;
+	q[0][2] = 30;
+	q[0][3] = 90;
+	q[1][0] = -270;
+	q[1][1] = 137;
+	q[1][2] = 80;
+	q[1][3] = 130;
+	q[2][0] = -72.5;
+	q[2][1] = 258;
+	q[2][2] = 55;
+	q[2][3] = 105;
+	q[3][0] = -142;
+	q[3][1] = 195;
+	q[3][2] = 80;
+	q[3][3] = 90;
 
-		//making sure the input is not more than 2pi
-		while (q[i][3] >= 360)
-		{
-			q[i][3] = q[i][3] - 360;
-		}
-	}
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	cout << "please enter point " << i + 1 << " parameters:" << endl;
 
-	cout << "Please enter the total time [s]: ";
-	cin >> tTime;
+	//	cout << "Please enter the value of X [mm]: ";
+	//	cin >> q[i][0];
+	//	cout << "Please enter the value of Y [mm]: ";
+	//	cin >> q[i][1];
+	//	cout << "Please enter the value of Z [mm]: ";
+	//	cin >> q[i][2];
+	//	cout << "Please enter the value of Theta [Degree]: ";   
+	//	cin >> q[i][3];
 
-	float q1[4], q2[4], q3[4];
+	//	//making sure the input is not more than 2pi
+	//	while (q[i][3] >= 360)
+	//	{
+	//		q[i][3] = q[i][3] - 360;
+	//	}
+	//}
+
+	//cout << "Please enter the total time [s]: ";
+	//cin >> tTime;
+
+	tTime = 20;
+
+	float q1[4], q2[4], q3[4], q4[4];
+	
+
 	
 	for (int i = 0; i < 4; i++) { q1[i] = q[0][i]; }
 	for (int i = 0; i < 4; i++) { q2[i] = q[1][i]; }
 	for (int i = 0; i < 4; i++) { q3[i] = q[2][i]; }
+	for (int i = 0; i < 4; i++) { q4[i] = q[3][i]; }
 
-	float d1, d2, d3;
-	float tS1, tS2, tS3;
+	float d1, d2, d3, d4;
+	float tS1, tS2, tS3, tS4;
+
+	
+
+	cout << endl;
+
+
 	d1 = distance(cc, q2);
 	d2 = distance(q1, q2);
 	d3 = distance(q2, q3);
-	tS1 = (d1 / (d1 + d2 + d3)) * tTime;
-	tS2 = (d2 / (d1 + d2 + d3)) * tTime;
-	tS3 = (d3 / (d1 + d2 + d3)) * tTime;
+	d4 = distance(q2, q3);
+
+	cout << "distances" << endl;
+	cout << d1 << endl;
+	cout << d2 << endl;
+	cout << d3 << endl;
+	cout << d4 << endl;
+
+	tS1 = (d1 / (d1 + d2 + d3 + d4)) * tTime;
+	tS2 = (d2 / (d1 + d2 + d3 + d4)) * tTime;
+	tS3 = (d3 / (d1 + d2 + d3 + d4)) * tTime;
+	tS4 = (d4 / (d1 + d2 + d3 + d4)) * tTime;
+
+	cout << "time" << endl;
+	cout << tS1 << endl;
+	cout << tS2 << endl;
+	cout << tS3 << endl;
+	cout << tS4 << endl;
 
 	MatrixXf options_1 = inverseKinematics(q1);
 	for (int i = 0; i < 4; i++){point1[i] = options_1(i, 0);}
 	for (int i = 0; i < 4; i++) {point1_2[i] = options_1(i, 1);}
 	for (int i = 0; i < 4; i++) { sol1[i] = choosePos(current, point1, point1_2) ? point1[i] : point1_2[i]; }
 
+	cout <<  "option 1 " << options_1 << endl;
+
 	MatrixXf options_2 = inverseKinematics(q2);
 	for (int i = 0; i < 4; i++) { point2[i] = options_2(i, 0); }
 	for (int i = 0; i < 4; i++) { point2_2[i] = options_2(i, 1); }
 	for (int i = 0; i < 4; i++) { sol2[i] = choosePos(sol1, point2, point2_2) ? point2[i] : point2_2[i]; }
 
+	cout << "option 2 " << options_2 << endl;
+
 	MatrixXf options_3 = inverseKinematics(q3);
-	for (int i = 0; i < 4; i++) { point3[i] = options_2(i, 0); }
-	for (int i = 0; i < 4; i++) { point3_2[i] = options_2(i, 1); }
+	for (int i = 0; i < 4; i++) { point3[i] = options_3(i, 0); }
+	for (int i = 0; i < 4; i++) { point3_2[i] = options_3(i, 1); }
 	for (int i = 0; i < 4; i++) { sol3[i] = choosePos(sol2, point3, point3_2) ? point3[i] : point3_2[i]; }
 
-	vector<double> vtheta1, vtheta2, vd3, vtheta4, vtime;
-	
-	vtheta1 = {cc[0],sol1[0],sol2[0],sol3[0]};
-	vtheta2 = { cc[1],sol1[1],sol2[1],sol3[1] };
-	vd3 = { cc[2],sol1[2],sol2[2],sol3[2] };
-	vtheta4 = { cc[3],sol1[3],sol2[3],sol3[3] };
-	vtime = { 0, tS1, tS1 + tS2, tS1 + tS2 + tS3 };
-	
+	cout << "option 3 " << options_3 << endl;
 
-	//tk::spline::cspline ();
-	tk::spline s1(vtime, vtheta1);
-	tk::spline s2(vtime, vtheta2);
-	tk::spline s3(vtime, vd3);
-	tk::spline s4(vtime, vtheta4);
+	MatrixXf options_4 = inverseKinematics(q4);
+	for (int i = 0; i < 4; i++) { point4[i] = options_4(i, 0); }
+	for (int i = 0; i < 4; i++) { point4_2[i] = options_4(i, 1); }
+	for (int i = 0; i < 4; i++) { sol4[i] = choosePos(sol3, point4, point4_2) ? point4[i] : point4_2[i]; }
+
+	cout << "option 3 " << options_4 << endl;
+
+	/// old spline method
+	//vector<double> vtheta1, vtheta2, vd3, vtheta4, vtime;
+
+	//vtheta1 = { cc[0],sol1[0],sol2[0],sol3[0] };
+	//vtheta2 = { cc[1],sol1[1],sol2[1],sol3[1] };
+	//vd3 = { cc[2],sol1[2],sol2[2],sol3[2] };
+	//vtheta4 = { cc[3],sol1[3],sol2[3],sol3[3] };
+	//vtime = { 0, tS1, tS1 + tS2, tS1 + tS2 + tS3 };
+
+
+	////tk::spline::cspline ();
+	//tk::spline s1(vtime, vtheta1);
+	//tk::spline s2(vtime, vtheta2);
+	//tk::spline s3(vtime, vd3);
+	//tk::spline s4(vtime, vtheta4);
+
+	/// </summary>
+
+	double theta1[5] = { cc[0],sol1[0],sol2[0],sol3[0],sol4[0] };
+	double theta2[5] = { cc[1],sol1[1],sol2[1],sol3[1],sol4[1] };
+	double distance3[5] = { cc[2],sol1[2],sol2[2],sol3[2],sol4[2] };
+	double theta4[5] = { cc[3],sol1[3],sol2[3],sol3[3],sol4[3] };
+	double timeSegment[5] = { 0, tS1, tS1 + tS2, tS1 + tS2 + tS3 , tS1 + tS2 + tS3 + tS4 };
+
+	cout << "  theta 1  " << endl;
+	cout << theta1[0] << endl;
+	cout << theta1[1] << endl;
+	cout << theta1[2] << endl;
+	cout << theta1[3] << endl;
+
+	cout << "  theta 2  " << endl;
+	cout << theta2[0] << endl;
+	cout << theta2[1] << endl;
+	cout << theta2[2] << endl;
+	cout << theta2[3] << endl;
+
+	cout << " distance 3 " << endl;
+	cout << distance3[0] << endl;
+	cout << distance3[1] << endl;
+	cout << distance3[2] << endl;
+	cout << distance3[3] << endl;
+
+
+	cout << "  theta 4  " << endl;
+	cout << theta4[0] << endl;
+	cout << theta4[1] << endl;
+	cout << theta4[2] << endl;
+	cout << theta4[3] << endl;
+
+
+
+
+
+	alglib::ae_int_t numberofpoint = 5;
+
+	alglib::real_1d_array arrayTheta1;
+	alglib::real_1d_array arrayTheta2;
+	alglib::real_1d_array arrayDistance3;
+	alglib::real_1d_array arrayTheta4;
+	alglib::real_1d_array arrayTime;
+	alglib::real_2d_array tbl;
+
+	arrayTheta1.setcontent(numberofpoint, theta1);
+	arrayTheta2.setcontent(numberofpoint, theta2);
+	arrayDistance3.setcontent(numberofpoint, distance3);
+	arrayTheta4.setcontent(numberofpoint, theta4);
+	arrayTime.setcontent(numberofpoint, timeSegment);
+
+	cout << "time checking "<<arrayTime.tostring(2) << endl;
+
+	alglib::spline1dinterpolant splineTheta1;
+	alglib::spline1dinterpolant splineTheta2;
+	alglib::spline1dinterpolant splineDistance3;
+	alglib::spline1dinterpolant splineTheta4;
+	//alglib::ae_int_t natural_bound_type = 2;
+
+	alglib::spline1dbuildcubic(arrayTime, arrayTheta1, splineTheta1);
+	alglib::spline1dbuildcubic(arrayTime, arrayTheta2, splineTheta2);
+	alglib::spline1dbuildcubic(arrayTime, arrayDistance3, splineDistance3);
+	alglib::spline1dbuildcubic(arrayTime, arrayTheta4, splineTheta4);
+
+	indext = 0.0;
+	int index = 0;
+	const int FPS = 25;
+	const int totalSampleNumber = tTime * FPS+ 1;
+
+	double theta1Pos[2000];
+	double theta2Pos[2000];
+	double theta4Pos[2000];
+	double theta1Vel[2000];
+	double theta2Vel[2000];
+	double theta4Vel[2000];
+	double theta1Acc[2000];
+	double theta2Acc[2000];
+	double theta4Acc[2000];
+	double distance3Pos[2000];
+	double distance3Vel[2000];
+	double distance3Acc[2000];
+
+	//while (indext < tTime)
+	//{
+	//	indext = indext + (0.04);
+	//	index = index + 1;
+	//	cout << indext << endl;
+	//	cout << index << endl;
+	//}
+
+	while (indext < tTime)
+	{
+		
+		alglib::spline1ddiff(splineTheta1, indext, theta1Pos[index], theta1Vel[index], theta1Acc[index]);
+		alglib::spline1ddiff(splineTheta2, indext, theta2Pos[index], theta2Vel[index], theta2Acc[index]);
+		alglib::spline1ddiff(splineDistance3, indext, distance3Pos[index], distance3Vel[index], distance3Acc[index]);
+		alglib::spline1ddiff(splineTheta4, indext, theta4Pos[index], theta4Vel[index], theta4Acc[index]);
+//		cout << "theta 1 pos " << theta1Pos[index] << "theta 1 vel " << theta1Vel[index] << "theta 1 acc " << theta1Acc[index] << endl;
+		cout << "distance 3 pos    " << distance3Pos[index] << "    distance 3 vel     " << distance3Vel[index] << "       distance 3 acc     " << distance3Acc[index] << endl;
+		indext = indext + (0.04);
+		index = index +1;
+		//cout << index << indext;
+
+	}
+	cout <<" index "<< index << endl;
+	cout << " indext " << indext << endl;
+	//for (int i = 0; i < index; i++) {	cout << "theta 1 pos " <<theta1Pos[index] << "theta 1 vel " << theta1Vel[index] <<"theta 1 acc " << theta1Acc[index] << endl;}
+
+
+
+	bool re = 1;
+	JOINT cur;
+
+	for (int i = 0; i < index ; i++)
+	{
+		JOINT pos;
+		pos[0] = theta1Pos[i]; pos[1] = theta2Pos[i]; pos[2] = distance3Pos[i]; pos[3] = theta4Pos[i];
+		JOINT vel;
+		vel[0] = theta1Vel[i]; vel[1] = theta2Vel[i]; vel[2] = distance3Vel[i]; vel[3] = theta4Vel[i];
+		JOINT acc;
+		acc[0] = theta1Acc[i]; acc[1] = theta2Acc[i]; acc[2] = distance3Acc[i]; acc[3] = theta4Acc[i];
+		
+		re = MoveWithConfVelAcc(pos, vel, acc);
+
+		GetConfiguration(cur);
+
+		cout << "moved? " << re << endl;
+
+		//MoveToConfiguration(pos, true);
+		cout << "planned pos" << pos[0] << "   " << pos[1] << "   " << pos[2] << "   " << pos[3] << endl;
+		cout << "current pos" << cur[0] << "   " << cur[1] << "   " << cur[2] << "   " << cur[3] << endl;
+
+		//wait(50);
+		Sleep(20);
+
+	}
+
 
 
 }
