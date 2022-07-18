@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\muhannad Fahmy\source\repos\ENSC_488 Project\src;H:\OneDrive - Simon Fraser University %281sfu%29\Academic\STUDY\SFU_\Sem 8\ENSC 488\Project\CopytoYourDir2020\Eigen Lib\eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\muhannad Fahmy\source\repos\ENSC_488 Project\gnuplot-iostream;C:\Users\muhannad Fahmy\source\repos\ENSC_488 Project\src;H:\OneDrive - Simon Fraser University %281sfu%29\Academic\STUDY\SFU_\Sem 8\ENSC 488\Project\CopytoYourDir2020\Eigen Lib\eigen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ensc-488.h" />
+    <ClInclude Include="..\gnuplot-iostream\gnuplot-iostream.h" />
     <ClInclude Include="..\Kinematics.h" />
     <ClInclude Include="..\spline.h" />
     <ClInclude Include="..\src\alglibinternal.h" />

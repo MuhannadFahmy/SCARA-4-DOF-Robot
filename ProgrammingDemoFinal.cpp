@@ -23,6 +23,7 @@ using namespace Eigen;
 
 int main(int argc, char* argv[])
 {
+	//
 	//char ch;
 	//int c;
 	//bool sel = true;
@@ -45,7 +46,7 @@ int main(int argc, char* argv[])
 	//			cout << "\n";
 	//			cout << "Inverse Kinematics\n";
 	//			moveToCoordinates();
-	//			sel = true;
+	//			//sel = true;
 	//			break;
 	//		default:
 	//			cout << "Press ESC to exit\n";
@@ -56,61 +57,9 @@ int main(int argc, char* argv[])
 	//		break;
 	//
 	//} while (sel);
-	////
+	//
 	
 
-	//double x1 = 0.0;
-	//double x2 = 12;
-	//double x3 = 7;
-	//double x4 = 5;
-
-	//vector<double> vtheta1, vtime;
-	//vtheta1 = { 0, 100, -100, 120 };
-	//vtime = { 0,5,10,15 };
-	//
-	////tk::spline::cspline;
-	//tk::spline S1;
-	//
-	//S1.set_boundary(tk::spline::first_deriv, 0.0,tk::spline::first_deriv, 0.0);
-	//S1.set_boundary(tk::spline::second_deriv, 0.0,tk::spline::second_deriv, 0.0);
-	//
-	//S1.set_points(vtime, vtheta1);
-
-	//cout << "x1  " << S1(x1) << " & x2  " << S1(x2) << " & x3  " << S1(x3) << " & x4 " << S1(x4) << endl;
-
-	// to get the first derivative -- double interpol = s.deriv(1,x);
-
-
-	//alglib::real_1d_array X = "[,5,10,15]";
-	//alglib::real_1d_array Y = "[0, 100, -100, 120]";
-	//alglib::real_2d_array tbl;
-
-	//double t = 5;
-	//double v;
-	//double v1;
-	//double v2;
-	//double v3;
-	//double d,ds,ds2;
-	//alglib::spline1dinterpolant s;
-	//alglib::ae_int_t natural_bound_type = 2;
-
-
-	//alglib::spline1dbuildcubic(X, Y, s);
-	//v = alglib::spline1dcalc(s, x1);
-	//v1 = alglib::spline1dcalc(s, x2);
-	//v2 = alglib::spline1dcalc(s, x3);
-	//v3 = alglib::spline1dcalc(s, x4);
-	//alglib::spline1ddiff(s, t,d,ds,ds2) ;
-	//alglib::ae_int_t n;
-	//alglib::spline1dunpack(s,n, tbl);
-
-	//cout << "x1  " << v << " & x2  " << v1 << " & x3  " << v2 << " & x4 " << v3 << endl;
-
-	//cout << "t  " << d << " & t'  " << ds << " & t''  " << ds2 << endl;
-
-	//cout << tbl.tostring(2) << endl;
-
-	////cout << "     " << tbl << "    " << endl;
 
 
 	char ch;
@@ -122,11 +71,14 @@ int main(int argc, char* argv[])
 
 		if (c != 27)//27 is the value for ESC key press
 		{
-		pathPlanning();
+			pathPlanning();
 
 		}
 		else
-		break;
+			break;
 
 	} while (sel);
+
+	
+
 }

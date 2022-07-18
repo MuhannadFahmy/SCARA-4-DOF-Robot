@@ -29,7 +29,12 @@
 #include "spline.h"
 #include "stdafx.h"
 #include "interpolation.h"
-#include<windows.h>
+#include <windows.h>
+#include <ctime>
+#include <chrono>
+#include <thread>
+#include <fstream>
+#include <cstdlib>
 
 
 using namespace std;
@@ -61,6 +66,7 @@ const float jointH3Lim[] = { -200, -100 };
 const float joint3Lim[] = { -200, -100 };
 const float joint4Lim[] = { toRad(-160), toRad(160) };
 bool choosePos(JOINT&, JOINT&, JOINT&);
+
 
 MatrixXf inverseKinematics(float gPos[]) 
 {
@@ -129,13 +135,13 @@ MatrixXf inverseKinematics(float gPos[])
 	{
 		cout << "There is only one solution" << toDegree(theta1_2) << endl;
 
-		oneSolution = 1;
+		oneSolution == true;
 	}
 
-	// Calculating theta 3 valuse
+	// Calculating theta 3 values
 
-	float theta3 = gPos[3] - theta1 - theta2; while (theta3 > 2 * pi) { theta3 = theta3 - 2 * pi; }
-	float theta3_2 =  gPos[3] - theta1_2 + theta2; while (theta3_2 > 2 * pi) { theta3_2 = theta3_2 - 2 * pi; }
+	float theta3 = gPos[3] - (theta1 + theta2); while (theta3 > 2 * pi) { theta3 = theta3 - (2 * pi); }
+	float theta3_2 =  gPos[3] - theta1_2 + theta2; while (theta3_2 > 2 * pi) { theta3_2 = theta3_2 - (2 * pi); }
 
 	//cout << "\u03B84  is" << toDegree(-theta3) << " and \u03B84_2  is  " << toDegree(-theta3_2) << endl;
 
@@ -182,7 +188,7 @@ void moveToCoordinates() //WIP
 	JOINT S_1;
 	JOINT S_2;
 	JOINT S_3;
-	JOINT current = { 90,0,-175,0 };
+	JOINT current = { 7,-82,-120,-75 };
 	MatrixXf solVector(4, 2);
 
 	char ch;
@@ -251,7 +257,7 @@ void moveToCoordinates() //WIP
 					MoveToConfiguration(S_2);
 					for (int i = 0; i < 4; i++) { current[i] = S_2[i]; }
 				}
-				else if (ch == '3')
+				else if (ch == '3') // that has an issue 
 				{
 					
 					JOINT solution;
@@ -309,6 +315,7 @@ void jointVectorInput()
 	/* Ask for the joint vector to be input in absolute coordinates and check that
 	each of the responses falls within its limits.
 	Store this as a joint vector called JV */
+
 	float JV[4];
 	bool lim, rep = true;
 	JOINT g1;
@@ -405,7 +412,12 @@ float distance(float point1[], float point2[])
 void pathPlanning()
 {
 	// getting in points
-	JOINT current = { 90,0,-175,0 };
+	JOINT current;
+	JOINT current1 = { 90, 0, -175, 0 };
+	Grasp(0);
+
+	JOINT point0;
+	JOINT point0_2;
 	JOINT point1;
 	JOINT point1_2;
 	JOINT point2;
@@ -415,6 +427,7 @@ void pathPlanning()
 	JOINT point4;
 	JOINT point4_2;
 
+	JOINT sol0;
 	JOINT sol1;
 	JOINT sol2;
 	JOINT sol3;
@@ -424,27 +437,67 @@ void pathPlanning()
 	
 	//homerobot();
 
-	float cc[4] = { 90, 0, -175, 0 };  
-
+	//float cc[4] = { 90, 0, -175, 0 };  
+	//float cc[4];         /// uncomment this
 
 	float q[4][4];
 
-	q[0][0] = -142;
-	q[0][1] = 195;
-	q[0][2] = 30;
-	q[0][3] = 90;
-	q[1][0] = -270;
-	q[1][1] = 137;
-	q[1][2] = 80;
-	q[1][3] = 130;
-	q[2][0] = -72.5;
-	q[2][1] = 258;
-	q[2][2] = 55;
-	q[2][3] = 105;
-	q[3][0] = -142;
-	q[3][1] = 195;
-	q[3][2] = 80;
-	q[3][3] = 90;
+	//q[0][0] = 230;
+	//q[0][1] = 115;
+	//q[0][2] = 50;
+	//q[0][3] = 0;
+	//q[1][0] = 230;
+	//q[1][1] = 0;
+	//q[1][2] = 50;
+	//q[1][3] = 0;
+	//q[2][0] = 230;
+	//q[2][1] = -115;
+	//q[2][2] = 50;
+	//q[2][3] = 0;
+	//q[3][0] = 230;
+	//q[3][1] = -230;
+	//q[3][2] = 50;
+	//q[3][3] = 0;
+
+	q[0][0] = 230;
+	q[0][1] = 115;
+	q[0][2] = 50;
+	q[0][3] = 0;
+
+	q[1][0] = 230;
+	q[1][1] = 0;
+	q[1][2] = 50;
+	q[1][3] = 0;
+
+	q[2][0] = 230;
+	q[2][1] = -115;
+	q[2][2] = 50;
+	q[2][3] = 0;
+
+	q[3][0] = 230;
+	q[3][1] = -230;
+	q[3][2] = 50;
+	q[3][3] = 0;
+
+
+
+	float cc[4] = { 230,230,50,0 };
+
+	//cout << "please enter the starting position" << endl;
+	//cout << "Please enter the value of X [mm]: ";
+	//cin >> cc[0];
+	//cout << "Please enter the value of Y [mm]: ";
+	//cin >> cc[1];
+	//cout << "Please enter the value of Z [mm]: ";
+	//cin >> cc[2];
+	//cout << "Please enter the value of Theta [Degree]: ";   
+	//cin >> cc[3];
+	//while (cc[3] >= 360)
+	//	{
+	//		cc[3] = cc[3] - 360;
+	//	}
+
+	current[0] = cc[0]; current[1] = cc[1]; current[2] = cc[2]; current[3] = cc[3];
 
 	//for (int i = 0; i < 4; i++)
 	//{
@@ -469,7 +522,14 @@ void pathPlanning()
 	//cout << "Please enter the total time [s]: ";
 	//cin >> tTime;
 
-	tTime = 20;
+	MatrixXf options_0 = inverseKinematics(cc);
+	for (int i = 0; i < 4; i++) { point0[i] = options_0(i, 0); }
+	for (int i = 0; i < 4; i++) { point0_2[i] = options_0(i, 1); }
+	for (int i = 0; i < 4; i++) { sol0[i] = choosePos(current1, point0, point0_2) ? point0[i] : point0_2[i]; }
+
+	DisplayConfiguration(sol0);
+
+	tTime =20;
 
 	float q1[4], q2[4], q3[4], q4[4];
 	
@@ -487,56 +547,64 @@ void pathPlanning()
 
 	cout << endl;
 
-
+	
 	d1 = distance(cc, q2);
 	d2 = distance(q1, q2);
 	d3 = distance(q2, q3);
 	d4 = distance(q2, q3);
 
-	cout << "distances" << endl;
+	/*cout << "distances" << endl;
 	cout << d1 << endl;
 	cout << d2 << endl;
 	cout << d3 << endl;
-	cout << d4 << endl;
+	cout << d4 << endl;*/
 
 	tS1 = (d1 / (d1 + d2 + d3 + d4)) * tTime;
 	tS2 = (d2 / (d1 + d2 + d3 + d4)) * tTime;
 	tS3 = (d3 / (d1 + d2 + d3 + d4)) * tTime;
 	tS4 = (d4 / (d1 + d2 + d3 + d4)) * tTime;
 
-	cout << "time" << endl;
-	cout << tS1 << endl;
-	cout << tS2 << endl;
-	cout << tS3 << endl;
-	cout << tS4 << endl;
+	//cout << "time" << endl;
+	//cout << tS1 << endl;
+	//cout << tS2 << endl;
+	//cout << tS3 << endl;
+	//cout << tS4 << endl;
+
+
 
 	MatrixXf options_1 = inverseKinematics(q1);
 	for (int i = 0; i < 4; i++){point1[i] = options_1(i, 0);}
 	for (int i = 0; i < 4; i++) {point1_2[i] = options_1(i, 1);}
 	for (int i = 0; i < 4; i++) { sol1[i] = choosePos(current, point1, point1_2) ? point1[i] : point1_2[i]; }
 
-	cout <<  "option 1 " << options_1 << endl;
+	//cout <<  "option 1 " << options_1 << endl;
 
 	MatrixXf options_2 = inverseKinematics(q2);
 	for (int i = 0; i < 4; i++) { point2[i] = options_2(i, 0); }
 	for (int i = 0; i < 4; i++) { point2_2[i] = options_2(i, 1); }
 	for (int i = 0; i < 4; i++) { sol2[i] = choosePos(sol1, point2, point2_2) ? point2[i] : point2_2[i]; }
 
-	cout << "option 2 " << options_2 << endl;
+	//cout << "option 2 " << options_2 << endl;
 
 	MatrixXf options_3 = inverseKinematics(q3);
 	for (int i = 0; i < 4; i++) { point3[i] = options_3(i, 0); }
 	for (int i = 0; i < 4; i++) { point3_2[i] = options_3(i, 1); }
 	for (int i = 0; i < 4; i++) { sol3[i] = choosePos(sol2, point3, point3_2) ? point3[i] : point3_2[i]; }
 
-	cout << "option 3 " << options_3 << endl;
+	//cout << "option 3 " << options_3 << endl;
+
+	cout << "q4" << endl;
+	cout << q4[0] << endl;
+	cout << q4[1] << endl;
+	cout << q4[2] << endl;
+	cout << q4[3] << endl;
 
 	MatrixXf options_4 = inverseKinematics(q4);
 	for (int i = 0; i < 4; i++) { point4[i] = options_4(i, 0); }
 	for (int i = 0; i < 4; i++) { point4_2[i] = options_4(i, 1); }
 	for (int i = 0; i < 4; i++) { sol4[i] = choosePos(sol3, point4, point4_2) ? point4[i] : point4_2[i]; }
 
-	cout << "option 3 " << options_4 << endl;
+	cout << "option 4 " << options_4 << endl;
 
 	/// old spline method
 	//vector<double> vtheta1, vtheta2, vd3, vtheta4, vtime;
@@ -556,10 +624,10 @@ void pathPlanning()
 
 	/// </summary>
 
-	double theta1[5] = { cc[0],sol1[0],sol2[0],sol3[0],sol4[0] };
-	double theta2[5] = { cc[1],sol1[1],sol2[1],sol3[1],sol4[1] };
-	double distance3[5] = { cc[2],sol1[2],sol2[2],sol3[2],sol4[2] };
-	double theta4[5] = { cc[3],sol1[3],sol2[3],sol3[3],sol4[3] };
+	double theta1[5] = { sol0[0],sol1[0],sol2[0],sol3[0],sol4[0] };
+	double theta2[5] = { sol0[1],sol1[1],sol2[1],sol3[1],sol4[1] };
+	double distance3[5] = { sol0[2],sol1[2],sol2[2],sol3[2],sol4[2] };
+	double theta4[5] = { sol0[3],sol1[3],sol2[3],sol3[3],sol4[3] };
 	double timeSegment[5] = { 0, tS1, tS1 + tS2, tS1 + tS2 + tS3 , tS1 + tS2 + tS3 + tS4 };
 
 	cout << "  theta 1  " << endl;
@@ -567,28 +635,28 @@ void pathPlanning()
 	cout << theta1[1] << endl;
 	cout << theta1[2] << endl;
 	cout << theta1[3] << endl;
+	cout << theta1[4] << endl;
 
 	cout << "  theta 2  " << endl;
 	cout << theta2[0] << endl;
 	cout << theta2[1] << endl;
 	cout << theta2[2] << endl;
 	cout << theta2[3] << endl;
+	cout << theta2[4] << endl;
 
 	cout << " distance 3 " << endl;
 	cout << distance3[0] << endl;
 	cout << distance3[1] << endl;
 	cout << distance3[2] << endl;
 	cout << distance3[3] << endl;
-
+	cout << distance3[4] << endl;
 
 	cout << "  theta 4  " << endl;
 	cout << theta4[0] << endl;
 	cout << theta4[1] << endl;
 	cout << theta4[2] << endl;
 	cout << theta4[3] << endl;
-
-
-
+	cout << theta4[4] << endl;
 
 
 	alglib::ae_int_t numberofpoint = 5;
@@ -612,7 +680,7 @@ void pathPlanning()
 	alglib::spline1dinterpolant splineTheta2;
 	alglib::spline1dinterpolant splineDistance3;
 	alglib::spline1dinterpolant splineTheta4;
-	//alglib::ae_int_t natural_bound_type = 2;
+	alglib::ae_int_t natural_bound_type = 2;
 
 	alglib::spline1dbuildcubic(arrayTime, arrayTheta1, splineTheta1);
 	alglib::spline1dbuildcubic(arrayTime, arrayTheta2, splineTheta2);
@@ -636,6 +704,11 @@ void pathPlanning()
 	double distance3Pos[2000];
 	double distance3Vel[2000];
 	double distance3Acc[2000];
+	double Positions[2000][8];
+	double theta1Cur[2000];
+	double theta2Cur[2000];
+	double distance3Cur[2000];
+	double theta4Cur[2000];
 
 	//while (indext < tTime)
 	//{
@@ -667,31 +740,112 @@ void pathPlanning()
 
 	bool re = 1;
 	JOINT cur;
+	clock_t t;
 
-	for (int i = 0; i < index ; i++)
+	//void write_csv(double theta1Cur[], double theta2Cur[], double theta4Cur[], double distance3Cur[], double theta1Pos[], double theta2Pos[], double distance3Pos[], double theta4Pos[])
+	//{
+	//	float Xcur, Ycur;
+	//	ofstream file("Output");
+	//	file << "Time,Theta1_planned,Theta1_current,Theta2_planned,Theta2_current,h3_planned,h3_current,Theta4_planned,Theta4_current,x,y\n";
+	//	
+	//	for (int i = 0; i < index; ++i)
+	//	{
+	//		//calculate X and Y positions for each frame using the current position
+	//		c1 = cos(theta1Cur[i]); s1 = sin(theta1Cur[i]); c12 = cos(theta1Cur[i] + theta2Cur[i]);	s12 = sin(theta1Cur[i] + theta2Cur[i]);
+	//		Xcur = c1 * L1 + c12 * L2; Ycur = s1 * L1 + s12 * L2;
+	//		//send values as single line accroding to header order
+	//		file << indext[i] << "," << theta1Pos[i] << "," << theta1Cur[i] << "," << "," << theta2Pos[i] << "," << theta2Cur[i] << "," << distance3Pos[i] << "," << distance3Cur[i] << "," << theta4Pos[i] << "," << theta4Cur[i] << "," << Xcur << "," << Ycur << "\n";
+	//	}
+	//	file.close();
+	//}
+	float c1, s1, c12, s12;
+	 float timee = 0.0, Xcur, Ycur;
+	JOINT pos;
+	JOINT vel;
+	JOINT acc;
+	time_t tstart, tend;
+	for (int i = 0; i < index-1 ; i++)
 	{
-		JOINT pos;
-		pos[0] = theta1Pos[i]; pos[1] = theta2Pos[i]; pos[2] = distance3Pos[i]; pos[3] = theta4Pos[i];
-		JOINT vel;
-		vel[0] = theta1Vel[i]; vel[1] = theta2Vel[i]; vel[2] = distance3Vel[i]; vel[3] = theta4Vel[i];
-		JOINT acc;
-		acc[0] = theta1Acc[i]; acc[1] = theta2Acc[i]; acc[2] = distance3Acc[i]; acc[3] = theta4Acc[i];
 		
+		tstart = time(0);
+		pos[0] = theta1Pos[i]; pos[1] = theta2Pos[i]; pos[2] = distance3Pos[i]; pos[3] = theta4Pos[i];
+		//pos[0] = 0; pos[1] = 0; pos[2] = 0; pos[3] = 0;
+		vel[0] = theta1Vel[i+1]; vel[1] = theta2Vel[i+1]; vel[2] = distance3Vel[i+1]; vel[3] = theta4Vel[i+1];
+		acc[0] = theta1Acc[i+1]; acc[1] = theta2Acc[i+1]; acc[2] = distance3Acc[i+1]; acc[3] = theta4Acc[i+1];
+		if (i == 0)
+		{
+			MoveToConfiguration(pos, true);
+		}
 		re = MoveWithConfVelAcc(pos, vel, acc);
+		/*for (int d = 0; d < 4, d++)
+		{
+			
+		}*/
+		//while (floor(pos[0] * 100) != floor(cur[0] * 100))
+		//{
+		//	/*switch (d)
+		//	{
+		//	case 0:
 
-		GetConfiguration(cur);
+		//	case 1:
 
+		//	case 2:
+
+		//	case 3:
+
+		//	}*/
+		//	GetConfiguration(cur);
+		//	cout << "planned pos" << floor(pos[0] * 100) << endl;
+		//	cout << "current pos" << floor(cur[0] * 100) << endl;
+		//}
+		
+
+		// theta1Cur[i] = cur[0]; theta2Cur[i] = cur[1]; distance3Cur[i] = cur[2]; theta4Cur[i] = cur[3];
+
+	//	for (int j = 0; j < 8; j = j + 2)
+	//		Positions[i][j] = pos[j];
+	///*	for (int k = 1; k < 8; k = k + 2)
+	//		Positions[i][k] = cur[k];
+	//	*/
+
+
+		/*t = (clock() - t) * 1000;
+		printf("it took (%f ms).\n", t, ((double)t));*/
+	
+		
+		tend = time(0);
+		this_thread::sleep_for(std::chrono::milliseconds(40));
+		//wait(50);
 		cout << "moved? " << re << endl;
 
+		GetConfiguration(cur);
 		//MoveToConfiguration(pos, true);
 		cout << "planned pos" << pos[0] << "   " << pos[1] << "   " << pos[2] << "   " << pos[3] << endl;
 		cout << "current pos" << cur[0] << "   " << cur[1] << "   " << cur[2] << "   " << cur[3] << endl;
-
-		//wait(50);
-		Sleep(20);
-
+		
+		
 	}
+	StopRobot();
 
+	bool grasp=0;
+	cout << " Would you like to grasp the object? [enter 1 for yes 0 for no ]" << endl;
+
+	cin >> grasp? Grasp(1):Grasp(0);
+
+	
+	ofstream file("outputValues.csv");
+	file << "Time,Theta1_planned,Theta1_current,Theta2_planned,Theta2_current,h3_planned,h3_current,Theta4_planned,Theta4_current,x,y\n";
+	for (int i = 0; i < index-1; ++i)
+	{
+		//calculate X and Y positions for each frame using the current position
+		c1 = cos(DEG2RAD(theta1Cur[i])); s1 = sin(DEG2RAD(theta1Cur[i])); c12 = cos(DEG2RAD(theta1Cur[i] + theta2Cur[i]));	s12 = sin(DEG2RAD(theta1Cur[i] + theta2Cur[i]));
+		Xcur = c1 * L1 + c12 * L2; Ycur = s1 * L1 + s12 * L2;
+		//send values as single line accroding to header order
+		timee = timee + (0.04);
+		file << timee << "," << theta1Pos[i] << "," << theta1Cur[i] << "," << theta2Pos[i] << "," << theta2Cur[i] << "," << distance3Pos[i] << "," << distance3Cur[i] << "," << theta4Pos[i] << "," << theta4Cur[i] << "," << Xcur << "," << Ycur << "\n";
+		 
+	}
+	file.close();
 
 
 }
