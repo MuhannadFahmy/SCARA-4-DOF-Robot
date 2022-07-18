@@ -10,7 +10,12 @@
 #include <Eigen/Dense>
 #include <math.h>
 #include "Kinematics.h"
-
+#include <vector>
+#include "spline.h"
+#include "stdafx.h"
+#include "interpolation.h"
+#include <stdio.h>
+#include <math.h>
 using namespace std;
 using namespace Eigen;
 
@@ -18,41 +23,62 @@ using namespace Eigen;
 
 int main(int argc, char* argv[])
 {
+	//
+	//char ch;
+	//int c;
+	//bool sel = true;
+	//printf("Press any key to continue or press ESC to exit \n");
+	//c = _getch();
+	//do {
+	//	if (c != 27)//27 is the value for ESC key press
+	//	{
+	//		printf("Press '1' to select the forward calculation or \n");
+	//		printf("press '2' to select the inverse calculation \n");
+	//		ch = _getch();
+	//		switch (ch) {
+	//		case '1':
+	//			cout << "\n";
+	//			cout << "Forward Kinematics\n";
+	//			jointVectorInput();
+	//			sel = true;
+	//			break;
+	//		case '2':
+	//			cout << "\n";
+	//			cout << "Inverse Kinematics\n";
+	//			moveToCoordinates();
+	//			//sel = true;
+	//			break;
+	//		default:
+	//			cout << "Press ESC to exit\n";
+	//			sel = false;
+	//		}
+	//	}
+	//	else
+	//		break;
+	//
+	//} while (sel);
+	//
+	
+
+
+
 	char ch;
 	int c;
 	bool sel = true;
 	printf("Press any key to continue or press ESC to exit \n");
 	c = _getch();
 	do {
+
 		if (c != 27)//27 is the value for ESC key press
 		{
-			printf("Press '1' to select the forward calculation or \n");
-			printf("press '2' to select the inverse calculation \n");
-			ch = _getch();
-			switch (ch) {
-			case '1':
-				cout << "\n";
-				cout << "Forward Kinematics\n";
-				jointVectorInput();
-				sel = true;
-				break;
-			case '2':
-				cout << "\n";
-				cout << "Inverse Kinematics\n";
-				moveToCoordinates();
-				sel = true;
-				break;
-			default:
-				cout << "Press ESC to exit\n";
-				sel = false;
-			}
+			pathPlanning();
+
 		}
 		else
 			break;
 
 	} while (sel);
-	
+
 	
 
-	return 0;
 }
