@@ -1,5 +1,5 @@
 # SCARA 4-DOF Robot
-## Skills learned:
+### Skills learned:
 * C/C++
 * Object Oriented Programming
 * Splines/path planning
@@ -31,12 +31,12 @@ During my project, I accomplished the following tasks: I created a mathematical 
 </p>
 
 # Forward and Inverse Kinematics Equations:
-## Forward Kinematics: 
+### Forward Kinematics: 
 <p align="center"> 
   <img src="https://github.com/MuhannadFahmy/SCARA-4-DOF-Robot/assets/20281531/a6cb06df-4ae2-4803-9ff9-4036da788a62" width="80%">
 </p>
 
-## Inverse Kinematics: 
+### Inverse Kinematics: 
 <p align="center"> 
   <img src="https://github.com/MuhannadFahmy/SCARA-4-DOF-Robot/assets/20281531/de56c3f0-d107-405f-8610-eaf57f6b06de" width="80%">
 </p>
